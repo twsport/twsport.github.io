@@ -112,17 +112,43 @@ function renderGames(games, tableBodyId, gameType) {
     games.forEach(game => {
         const row = document.createElement('tr');
         const detailPage = gameType === 'soccer' ? 'game_detail.html' : 'gameb_detail.html';
-        
-        row.innerHTML = `
-            <td>${game.league_name || 'N/A'}</td>
-            <td>${game.home_team || 'N/A'}</td>
-            <td>${game.away_team || 'N/A'}</td>
-            <td>${game.game_type || 'N/A'}</td>
-            <td>${formatDateTime(game.start_time)}</td>
-            <td>
-                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">查看盤口</a>
-            </td>
-        `;
+
+        // 創建並添加聯賽 TD
+        const leagueTd = document.createElement('td');
+        leagueTd.textContent = game.league_name || 'N/A';
+        row.appendChild(leagueTd);
+
+        // 創建並添加主場 TD
+        const homeTeamTd = document.createElement('td');
+        homeTeamTd.textContent = game.home_team || 'N/A';
+        row.appendChild(homeTeamTd);
+
+        // 創建並添加客場 TD
+        const awayTeamTd = document.createElement('td');
+        awayTeamTd.textContent = game.away_team || 'N/A';
+        row.appendChild(awayTeamTd);
+
+        // 創建並添加單場or場中 TD
+        const gameTypeTd = document.createElement('td');
+        gameTypeTd.textContent = game.game_type || 'N/A';
+        row.appendChild(gameTypeTd);
+
+        // *** 關鍵修改：為開賽時間單獨創建 TD 並使用 innerHTML ***
+        const startTimeTd = document.createElement('td');
+        startTimeTd.innerHTML = formatDateTime(game.start_time); // 使用 innerHTML 確保 <br> 被解析
+        row.appendChild(startTimeTd);
+        // *******************************************************
+
+        // 創建並添加查看盤口 TD
+        const viewOddsTd = document.createElement('td');
+        const viewOddsLink = document.createElement('a');
+        viewOddsLink.href = `<span class="math-inline">\{detailPage\}?id\=</span>{game.FIXTURE_ID}`;
+        viewOddsLink.className = 'btn btn-primary btn-lg';
+        viewOddsLink.style = 'font-size: 24px; padding: 15px 40px;';
+        viewOddsLink.textContent = '查看盤口';
+        viewOddsTd.appendChild(viewOddsLink);
+        row.appendChild(viewOddsTd);
+
         tableBody.appendChild(row);
     });
 }
