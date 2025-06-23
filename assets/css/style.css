@@ -96,3 +96,10 @@ h1, h2 {
         margin-bottom: 15px;
     }
 }
+
+
+/* 確保聊天室下方留有空間 */
+.chatbox-container {
+    margin-top: 30px; /* 增加上邊距，可以根據需要調整數值 */
+    margin-bottom: 30px; /* 增加下邊距，讓內容不至於太貼近 */
+}
