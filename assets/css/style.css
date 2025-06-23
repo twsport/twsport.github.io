@@ -23,16 +23,6 @@ h1, h2 {
     border-collapse: collapse;
 }
 
-/* 在 .game-table 或 .detail-table 的樣式附近加入此規則 */
-.game-table .btn,
-.detail-table .btn {
-    font-size: 0.9rem; /* 調整按鈕字體大小，可以根據需求調整 */
-    padding: 0.4rem 0.8rem; /* 調整按鈕內距，讓它更緊湊 */
-    /* 移除任何 Bootstrap 預設的 margin-right, 避免按鈕之間距離過大 */
-    margin-right: 0; 
-}
-
-
 .game-table th, .game-table td,
 .detail-table th, .detail-table td {
     padding: 0.75rem;
@@ -109,11 +99,7 @@ h1, h2 {
         margin-bottom: 15px;
     }
 
-    /* 現有的手機版按鈕縮小規則，可以保留或根據上面調整後微調 */
-    .game-table .btn { /* 針對表格內的按鈕 */
-        font-size: 0.75rem; /* 縮小字體 */
-        padding: 0.25rem 0.5rem; /* 縮小內距 */
-    }
+   
 }
 
 /* 確保聊天室下方留有空間 */
