@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 如果是首頁，加載賽事列表
         loadSoccerGames();
         loadBasketballGames();
+        // 預設顯示足球表格
+        showTable('soccer');
     } else if (path.includes('game_detail.html')) {
         // 如果是足球賽事詳情頁
         const urlParams = new URLSearchParams(window.location.search);
@@ -35,6 +37,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- 賽事列表頁功能 (index.html) ---
 
+// 籃球足球切換顯示邏輯
+function showTable(sport) {
+    const soccerTable = document.getElementById("soccer_table");
+    const basketballTable = document.getElementById("basketball_table");
+    const soccerButton = document.querySelector('button[onclick="showTable(\'soccer\')"]');
+    const basketballButton = document.querySelector('button[onclick="showTable(\'basketball\')"]');
+
+    if (sport === 'soccer') {
+        soccerTable.style.display = "block";
+        basketballTable.style.display = "none";
+        soccerButton.classList.add('btn-primary');
+        soccerButton.classList.remove('btn-secondary');
+        basketballButton.classList.add('btn-secondary');
+        basketballButton.classList.remove('btn-primary');
+    } else {
+        soccerTable.style.display = "none";
+        basketballTable.style.display = "block";
+        basketballButton.classList.add('btn-primary');
+        basketballButton.classList.remove('btn-secondary');
+        soccerButton.classList.add('btn-secondary');
+        soccerButton.classList.remove('btn-primary');
+    }
+}
+
+
 async function loadSoccerGames() {
     try {
         const response = await fetch(`${CLOUD_RUN_API_BASE_URL}/api/soccer_games`);
@@ -48,8 +75,8 @@ async function loadSoccerGames() {
 
     } catch (error) {
         console.error("Error fetching soccer games:", error);
-        document.getElementById('future-soccer-games').innerHTML = '<tr><td colspan="5" class="text-danger">加載足球賽事失敗。</td></tr>';
-        document.getElementById('past-soccer-games').innerHTML = '<tr><td colspan="5" class="text-danger">加載足球賽事失敗。</td></tr>';
+        document.getElementById('future-soccer-games').innerHTML = '<tr><td colspan="6" class="text-danger">加載足球賽事失敗。</td></tr>';
+        document.getElementById('past-soccer-games').innerHTML = '<tr><td colspan="6" class="text-danger">加載足球賽事失敗。</td></tr>';
     }
 }
 
@@ -66,8 +93,8 @@ async function loadBasketballGames() {
 
     } catch (error) {
         console.error("Error fetching basketball games:", error);
-        document.getElementById('future-basketball-games').innerHTML = '<tr><td colspan="5" class="text-danger">加載籃球賽事失敗。</td></tr>';
-        document.getElementById('past-basketball-games').innerHTML = '<tr><td colspan="5" class="text-danger">加載籃球賽事失敗。</td></tr>';
+        document.getElementById('future-basketball-games').innerHTML = '<tr><td colspan="6" class="text-danger">加載籃球賽事失敗。</td></tr>';
+        document.getElementById('past-basketball-games').innerHTML = '<tr><td colspan="6" class="text-danger">加載籃球賽事失敗。</td></tr>';
     }
 }
 
@@ -78,7 +105,7 @@ function renderGames(games, tableBodyId, gameType) {
     tableBody.innerHTML = ''; // 清空現有內容
 
     if (games.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5">暫無${gameType === 'soccer' ? '足球' : '籃球'}賽事</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6">暫無${gameType === 'soccer' ? '足球' : '籃球'}賽事</td></tr>`;
         return;
     }
 
@@ -90,9 +117,10 @@ function renderGames(games, tableBodyId, gameType) {
             <td>${game.league_name || 'N/A'}</td>
             <td>${game.home_team || 'N/A'}</td>
             <td>${game.away_team || 'N/A'}</td>
+            <td>${game.game_type || 'N/A'}</td>
             <td>${formatDateTime(game.start_time)}</td>
             <td>
-                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-sm btn-info">查看盤口</a>
+                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">查看盤口</a>
             </td>
         `;
         tableBody.appendChild(row);
