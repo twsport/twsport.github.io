@@ -1,0 +1,98 @@
+body {
+    font-family: '微軟正黑體', 'Microsoft JhengHei', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.container-fluid {
+    max-width: 1200px; /* 限制內容寬度，讓頁面更易讀 */
+}
+
+h1, h2 {
+    color: #0056b3;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #0056b3;
+    padding-bottom: 10px;
+}
+
+.game-table, .detail-table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+}
+
+.game-table th, .game-table td,
+.detail-table th, .detail-table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border: 1px solid #dee2e6;
+    font-size: 1rem; /* 調整表格字體大小 */
+}
+
+.game-table thead th, .detail-table thead th {
+    background-color: #343a40;
+    color: #fff;
+    border-color: #454d55;
+    font-size: 1.1rem;
+}
+
+.game-table tbody tr:nth-of-type(odd),
+.detail-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.game-table tbody tr:hover,
+.detail-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.back-home-button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    margin-bottom: 30px;
+}
+
+/* 確保表格在小螢幕上可以滾動 */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* For better readability on smaller screens, especially for tables */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .game-table th, .game-table td,
+    .detail-table th, .detail-table td {
+        font-size: 0.85rem; /* 更小的字體 */
+        padding: 0.5rem;
+    }
+    
+    .game-table thead th, .detail-table thead th {
+        font-size: 0.9rem;
+    }
+
+    h1, h2 {
+        font-size: 1.8rem;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+}
