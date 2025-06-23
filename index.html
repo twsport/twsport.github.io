@@ -18,76 +18,43 @@
 </head>
 <body>
     <div class="container-fluid px-3 px-md-5 my-4">
-        <h1 class="text-center my-4">足球賽事</h1>
 
-        <h2>足球未開賽賽事</h2>
-        <table class="table table-bordered text-center game-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>聯盟</th>
-                    <th>主場</th>
-                    <th>客場</th>
-                    <th>開賽時間</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="future-soccer-games">
-                </tbody>
-        </table>
+        <h1>TW運彩攻略本v2</h1>
+        <p>這個網站針對台灣運彩單場/場中賽事，同步跟進澳門莊家盤口賠率紀錄，提供技術者參考投注</p>
+        <h2>第二代實驗版連結 <a href="https://gcp-sports-614604095631.us-central1.run.app" target="_blank">https://gcp-sports-614604095631.us-central1.run.app</a></h2>
+        <h2>入口網址 <a href="https://tw-sport.blogspot.com/" target="_blank">https://tw-sport.blogspot.com/</a></h2>
+        <h3>開賽前[2]小時會開始撈取數據，一直撈到開賽後[30]分鐘</h3>
+        <p>如果這些資訊對你有幫助，有幫你賺到一些錢或閃過一些地雷場次，拜託您支持這個站台</p>
+        <p>支持帳號：(812)台新銀行 2082-1000-108822</p>
+        <p>有異常之處，請聯繫作者確認</p>
 
-        <h2>足球已開賽賽事</h2>
-        <table class="table table-bordered text-center game-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>聯盟</th>
-                    <th>主場</th>
-                    <th>客場</th>
-                    <th>開賽時間</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="past-soccer-games">
-                </tbody>
-        </table>
+        <div id="div-onead-nd-01"></div>
+        <script type="text/javascript">
+            var custom_call = function (params) {
+                if (params.hasAd) {
+                    console.log('ND has AD');
+                } else {
+                    console.log('ND AD Empty');
+                }
+            }
+            ONEAD_TEXT = {};
+            ONEAD_TEXT.pub = {};
+            ONEAD_TEXT.pub.uid = "2000502";
+            ONEAD_TEXT.pub.slotobj = document.getElementById("div-onead-nd-01");
+            ONEAD_TEXT.pub.player_mode = "native-drive";
+            ONEAD_TEXT.pub.player_mode_div = "div-onead-ad";
+            ONEAD_TEXT.pub.max_threads = 3;
+            ONEAD_TEXT.pub.position_id = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "5" : "0";
+            ONEAD_TEXT.pub.queryAdCallback = custom_call;
+            window.ONEAD_text_pubs = window.ONEAD_text_pubs || [];
+            ONEAD_text_pubs.push(ONEAD_TEXT);
+        </script>
+        <script src="https://ad-specs.guoshipartners.com/static/js/ad-serv.min.js"></script>
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;">
+            <button onclick="showTable('soccer')" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">足球</button>
+            <button onclick="showTable('basketball')" class="btn btn-secondary btn-lg" style="font-size: 24px; padding: 15px 40px;">籃球</button>
+        </div>
 
-        <hr class="my-5">
-
-        <h1 class="text-center my-4">籃球賽事</h1>
-
-        <h2>籃球未開賽賽事</h2>
-        <table class="table table-bordered text-center game-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>聯盟</th>
-                    <th>主場</th>
-                    <th>客場</th>
-                    <th>開賽時間</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="future-basketball-games">
-                </tbody>
-        </table>
-
-        <h2>籃球已開賽賽事</h2>
-        <table class="table table-bordered text-center game-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>聯盟</th>
-                    <th>主場</th>
-                    <th>客場</th>
-                    <th>開賽時間</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="past-basketball-games">
-                </tbody>
-        </table>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="assets/js/script.js"></script>
-</body>
-</html>
+        <div id="soccer_table">
+            <h2>足球未開賽賽事</h2>
+            <table class="table table-bordered text
