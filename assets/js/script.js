@@ -238,30 +238,37 @@ function renderOddsTable(oddsData, tableBodyId, keys) {
 function formatDateTime(isoString) {
     if (!isoString) return 'N/A';
     try {
-        // 嘗試解析為 Date 對象
         const date = new Date(isoString);
-        // 檢查是否為有效日期
         if (isNaN(date.getTime())) {
-            // 如果不是有效的日期對象，嘗試從字串中提取日期和時間部分
             const match = isoString.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
             if (match) {
                 const parts = match[1].split('T');
-                return `${parts[0]} ${parts[1]}`;
+                // 在日期和時間之間插入 <br> 標籤
+                return `${parts[0]}<br>${parts[1]}`;
             }
-            return isoString; // 無法解析則回傳原始字串
+            return isoString;
         }
-        // 使用 toLocaleString 格式化為本地時間
-        return date.toLocaleString('zh-TW', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit', 
-            hour: '2-digit', 
-            minute: '2-digit', 
+
+        // 格式化日期部分
+        const datePart = date.toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        // 格式化時間部分
+        const timePart = date.toLocaleTimeString('zh-TW', {
+            hour: '2-digit',
+            minute: '2-digit',
             second: '2-digit',
             hour12: false // 使用24小時制
         });
+
+        // 返回日期和時間，中間用 <br> 標籤隔開
+        return `${datePart}<br>${timePart}`;
+
     } catch (e) {
         console.error("Error formatting date:", isoString, e);
-        return isoString; // 發生錯誤時回傳原始字串
+        return isoString;
     }
 }
