@@ -26,7 +26,7 @@ h1, h2 {
 .game-table th, .game-table td,
 .detail-table th, .detail-table td {
     padding: 0.75rem;
-    vertical-align: top;
+    vertical-align: middle; /* Change this line from 'top' to 'middle' */
     border: 1px solid #dee2e6;
     font-size: 1rem; /* 調整表格字體大小 */
 }
