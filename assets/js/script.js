@@ -112,43 +112,17 @@ function renderGames(games, tableBodyId, gameType) {
     games.forEach(game => {
         const row = document.createElement('tr');
         const detailPage = gameType === 'soccer' ? 'game_detail.html' : 'gameb_detail.html';
-
-        // 創建並添加聯賽 TD
-        const leagueTd = document.createElement('td');
-        leagueTd.textContent = game.league_name || 'N/A';
-        row.appendChild(leagueTd);
-
-        // 創建並添加主場 TD
-        const homeTeamTd = document.createElement('td');
-        homeTeamTd.textContent = game.home_team || 'N/A';
-        row.appendChild(homeTeamTd);
-
-        // 創建並添加客場 TD
-        const awayTeamTd = document.createElement('td');
-        awayTeamTd.textContent = game.away_team || 'N/A';
-        row.appendChild(awayTeamTd);
-
-        // 創建並添加單場or場中 TD
-        const gameTypeTd = document.createElement('td');
-        gameTypeTd.textContent = game.game_type || 'N/A';
-        row.appendChild(gameTypeTd);
-
-        // *** 關鍵修改：為開賽時間單獨創建 TD 並使用 innerHTML ***
-        const startTimeTd = document.createElement('td');
-        startTimeTd.innerHTML = formatDateTime(game.start_time); // 使用 innerHTML 確保 <br> 被解析
-        row.appendChild(startTimeTd);
-        // *******************************************************
-
-        // 創建並添加查看盤口 TD
-        const viewOddsTd = document.createElement('td');
-        const viewOddsLink = document.createElement('a');
-        viewOddsLink.href = `<span class="math-inline">\{detailPage\}?id\=</span>{game.FIXTURE_ID}`;
-        viewOddsLink.className = 'btn btn-primary btn-lg';
-        viewOddsLink.style = 'font-size: 24px; padding: 15px 40px;';
-        viewOddsLink.textContent = '查看盤口';
-        viewOddsTd.appendChild(viewOddsLink);
-        row.appendChild(viewOddsTd);
-
+        
+        row.innerHTML = `
+            <td>${game.league_name || 'N/A'}</td>
+            <td>${game.home_team || 'N/A'}</td>
+            <td>${game.away_team || 'N/A'}</td>
+            <td>${game.game_type || 'N/A'}</td>
+            <td>${formatDateTime(game.start_time)}</td>
+            <td>
+                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">查看盤口</a>
+            </td>
+        `;
         tableBody.appendChild(row);
     });
 }
@@ -263,47 +237,35 @@ function renderOddsTable(oddsData, tableBodyId, keys) {
 // 輔助函數：格式化日期時間
 function formatDateTime(isoString) {
     if (!isoString) return 'N/A';
-
-    // 判斷當前頁面是否為 game_detail.html 或 gameb_detail.html
-    const isDetailPage = window.location.pathname.includes('game_detail.html') ||
-                         window.location.pathname.includes('gameb_detail.html');
-
     try {
         const date = new Date(isoString);
-        let datePart;
-        let timePart;
-
-        // 處理無法直接解析為 Date 物件的字串 (例如 "YYYY-MM-DDTHH:MM:SS" 格式)
         if (isNaN(date.getTime())) {
-            const match = isoString.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/);
+            const match = isoString.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
             if (match) {
-                datePart = match[1]; // 日期部分
-                timePart = match[2]; // 時間部分
-            } else {
-                return isoString; // 如果格式不符，直接返回原始字串
+                const parts = match[1].split('T');
+                // 在日期和時間之間插入 <br> 標籤
+                return `${parts[0]}<br>${parts[1]}`;
             }
-        } else {
-            // 使用 Date 物件來格式化日期和時間
-            datePart = date.toLocaleDateString('zh-TW', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-
-            timePart = date.toLocaleTimeString('zh-TW', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false // 使用24小時制
-            });
+            return isoString;
         }
 
-        // 根據頁面類型返回不同的格式
-        if (isDetailPage) {
-            return `${datePart} ${timePart}`; // 詳情頁不換行，使用空格
-        } else {
-            return `<span class="math-inline">\{datePart\}<br\></span>{timePart}`; // 首頁保持換行
-        }
+        // 格式化日期部分
+        const datePart = date.toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        // 格式化時間部分
+        const timePart = date.toLocaleTimeString('zh-TW', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // 使用24小時制
+        });
+
+        // 返回日期和時間，中間用 <br> 標籤隔開
+        return `${datePart}<br>${timePart}`;
 
     } catch (e) {
         console.error("Error formatting date:", isoString, e);
