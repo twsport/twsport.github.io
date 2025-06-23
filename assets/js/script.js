@@ -237,35 +237,47 @@ function renderOddsTable(oddsData, tableBodyId, keys) {
 // 輔助函數：格式化日期時間
 function formatDateTime(isoString) {
     if (!isoString) return 'N/A';
+
+    // 判斷當前頁面是否為 game_detail.html 或 gameb_detail.html
+    const isDetailPage = window.location.pathname.includes('game_detail.html') ||
+                         window.location.pathname.includes('gameb_detail.html');
+
     try {
         const date = new Date(isoString);
+        let datePart;
+        let timePart;
+
+        // 處理無法直接解析為 Date 物件的字串 (例如 "YYYY-MM-DDTHH:MM:SS" 格式)
         if (isNaN(date.getTime())) {
-            const match = isoString.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
+            const match = isoString.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/);
             if (match) {
-                const parts = match[1].split('T');
-                // 在日期和時間之間插入 <br> 標籤
-                return `${parts[0]}<br>${parts[1]}`;
+                datePart = match[1]; // 日期部分
+                timePart = match[2]; // 時間部分
+            } else {
+                return isoString; // 如果格式不符，直接返回原始字串
             }
-            return isoString;
+        } else {
+            // 使用 Date 物件來格式化日期和時間
+            datePart = date.toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+
+            timePart = date.toLocaleTimeString('zh-TW', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 使用24小時制
+            });
         }
 
-        // 格式化日期部分
-        const datePart = date.toLocaleDateString('zh-TW', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
-
-        // 格式化時間部分
-        const timePart = date.toLocaleTimeString('zh-TW', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false // 使用24小時制
-        });
-
-        // 返回日期和時間，中間用 <br> 標籤隔開
-        return `${datePart}<br>${timePart}`;
+        // 根據頁面類型返回不同的格式
+        if (isDetailPage) {
+            return `${datePart} ${timePart}`; // 詳情頁不換行，使用空格
+        } else {
+            return `<span class="math-inline">\{datePart\}<br\></span>{timePart}`; // 首頁保持換行
+        }
 
     } catch (e) {
         console.error("Error formatting date:", isoString, e);
