@@ -95,6 +95,12 @@ h1, h2 {
         margin-top: 20px;
         margin-bottom: 15px;
     }
+
+    /* 新增或修改以下規則來縮小「看盤口」按鈕 */
+    .game-table .btn { /* 針對表格內的按鈕 */
+        font-size: 0.75rem; /* 縮小字體 */
+        padding: 0.25rem 0.5rem; /* 縮小內距 */
+    }
 }
 
 
