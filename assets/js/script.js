@@ -70,8 +70,9 @@ async function loadSoccerGames() {
         }
         const data = await response.json();
         
-        renderGames(data.future_games, 'future-soccer-games', 'soccer');
-        renderGames(data.past_games, 'past-soccer-games', 'soccer');
+        // 在 index.html 中，日期時間需要換行，所以傳入 true
+        renderGames(data.future_games, 'future-soccer-games', 'soccer', true);
+        renderGames(data.past_games, 'past-soccer-games', 'soccer', true);
 
     } catch (error) {
         console.error("Error fetching soccer games:", error);
@@ -88,8 +89,9 @@ async function loadBasketballGames() {
         }
         const data = await response.json();
         
-        renderGames(data.future_games, 'future-basketball-games', 'basketball');
-        renderGames(data.past_games, 'past-basketball-games', 'basketball');
+        // 在 index.html 中，日期時間需要換行，所以傳入 true
+        renderGames(data.future_games, 'future-basketball-games', 'basketball', true);
+        renderGames(data.past_games, 'past-basketball-games', 'basketball', true);
 
     } catch (error) {
         console.error("Error fetching basketball games:", error);
@@ -98,7 +100,8 @@ async function loadBasketballGames() {
     }
 }
 
-function renderGames(games, tableBodyId, gameType) {
+// 調整 renderGames 函數，新增一個參數來控制是否換行
+function renderGames(games, tableBodyId, gameType, addBreakTag = false) {
     const tableBody = document.getElementById(tableBodyId);
     if (!tableBody) return;
 
@@ -113,12 +116,15 @@ function renderGames(games, tableBodyId, gameType) {
         const row = document.createElement('tr');
         const detailPage = gameType === 'soccer' ? 'game_detail.html' : 'gameb_detail.html';
         
+        // 使用 formatDateTime 函數並傳入 addBreakTag 參數
+        const formattedDateTime = formatDateTime(game.start_time, addBreakTag);
+
         row.innerHTML = `
             <td>${game.league_name || 'N/A'}</td>
             <td>${game.home_team || 'N/A'}</td>
             <td>${game.away_team || 'N/A'}</td>
             <td>${game.game_type || 'N/A'}</td>
-            <td>${formatDateTime(game.start_time)}</td>
+            <td>${formattedDateTime}</td>
             <td>
                 <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">查看盤口</a>
             </td>
@@ -145,22 +151,23 @@ async function loadSoccerGameDetails(gameId) {
         // 填充基本賽事資訊
         document.getElementById('home-team').textContent = data.game_info.home_team || 'N/A';
         document.getElementById('away-team').textContent = data.game_info.away_team || 'N/A';
-        document.getElementById('game-time').textContent = formatDateTime(data.game_info.start_time);
+        // 在詳情頁的基本資訊處不需要換行，所以傳入 false
+        document.getElementById('game-time').textContent = formatDateTime(data.game_info.start_time, false);
 
         // 填充亞洲盤口
         renderOddsTable(data.asia_odds, 'asia-odds-table', [
             'formatted_time', 'asia_plate', 'host_price', 'guest_price'
-        ]);
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
         // 填充歐洲盤口
         renderOddsTable(data.euro_odds, 'euro-odds-table', [
             'formatted_time', 'host_price', 'draw_price', 'guest_price'
-        ]);
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
         // 填充大小盤口
         renderOddsTable(data.count_odds, 'count-odds-table', [
             'formatted_time', 'count', 'upper_price', 'lower_price'
-        ]);
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
     } catch (error) {
         console.error(`Error fetching soccer game details for ID ${gameId}:`, error);
@@ -184,22 +191,23 @@ async function loadBasketballGameDetails(gameId) {
         // 填充基本賽事資訊
         document.getElementById('home-team').textContent = data.game_info.home_team || 'N/A';
         document.getElementById('away-team').textContent = data.game_info.away_team || 'N/A';
-        document.getElementById('game-time').textContent = formatDateTime(data.game_info.start_time);
+        // 在詳情頁的基本資訊處不需要換行，所以傳入 false
+        document.getElementById('game-time').textContent = formatDateTime(data.game_info.start_time, false);
 
         // 填充讓分盤口
         renderOddsTable(data.give_odds, 'give-odds-table', [
             'formatted_time', 'give_plate', 'host_price', 'guest_price'
-        ]);
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
         // 填充標準盤口
         renderOddsTable(data.std_odds, 'std-odds-table', [
-            'formatted_time', 'host_price', 'draw_price', 'guest_price' // 注意：籃球標準盤可能沒有 'draw_price'，請根據你的數據調整
-        ]);
+            'formatted_time', 'host_price', 'draw_price', 'guest_price'
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
         // 填充大小球盤口
         renderOddsTable(data.ball_odds, 'ball-odds-table', [
             'formatted_time', 'ball_plate', 'upper_price', 'lower_price'
-        ]);
+        ], false); // 在表格內也不需要換行，所以傳入 false
 
     } catch (error) {
         console.error(`Error fetching basketball game details for ID ${gameId}:`, error);
@@ -207,7 +215,8 @@ async function loadBasketballGameDetails(gameId) {
     }
 }
 
-function renderOddsTable(oddsData, tableBodyId, keys) {
+// 調整 renderOddsTable 函數，新增一個參數來控制是否換行
+function renderOddsTable(oddsData, tableBodyId, keys, addBreakTag = false) {
     const tableBody = document.getElementById(tableBodyId);
     if (!tableBody) return;
 
@@ -224,7 +233,8 @@ function renderOddsTable(oddsData, tableBodyId, keys) {
             const td = document.createElement('td');
             // 特殊處理時間格式
             if (key === 'formatted_time') {
-                td.textContent = formatDateTime(item[key]);
+                // 使用 formatDateTime 函數並傳入 addBreakTag 參數
+                td.textContent = formatDateTime(item[key], addBreakTag);
             } else {
                 td.textContent = item[key] !== undefined && item[key] !== null ? item[key] : 'N/A';
             }
@@ -235,7 +245,8 @@ function renderOddsTable(oddsData, tableBodyId, keys) {
 }
 
 // 輔助函數：格式化日期時間
-function formatDateTime(isoString) {
+// 新增一個參數 addBreakTag，預設為 false
+function formatDateTime(isoString, addBreakTag = false) {
     if (!isoString) return 'N/A';
     try {
         const date = new Date(isoString);
@@ -243,8 +254,8 @@ function formatDateTime(isoString) {
             const match = isoString.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
             if (match) {
                 const parts = match[1].split('T');
-                // 在日期和時間之間插入 <br> 標籤
-                return `${parts[0]}<br>${parts[1]}`;
+                // 根據 addBreakTag 決定是否插入 <br> 標籤
+                return addBreakTag ? `${parts[0]}<br>${parts[1]}` : `${parts[0]} ${parts[1]}`;
             }
             return isoString;
         }
@@ -264,8 +275,8 @@ function formatDateTime(isoString) {
             hour12: false // 使用24小時制
         });
 
-        // 返回日期和時間，中間用 <br> 標籤隔開
-        return `${datePart}<br>${timePart}`;
+        // 根據 addBreakTag 決定是否返回帶 <br> 的字串
+        return addBreakTag ? `${datePart}<br>${timePart}` : `${datePart} ${timePart}`;
 
     } catch (e) {
         console.error("Error formatting date:", isoString, e);
