@@ -107,3 +107,22 @@ h1, h2 {
     margin-top: 30px; /* 增加上邊距，可以根據需要調整數值 */
     margin-bottom: 30px; /* 增加下邊距，讓內容不至於太貼近 */
 }
+
+
+
+/* 調整查看盤口按鈕的樣式 */
+.view-odds-btn {
+    font-size: 1.1rem; /* 調整字體大小，例如 1.1rem 或 1rem */
+    padding: 8px 18px; /* 調整內邊距，使其更小 */
+    /* 如果你希望它像其他 btn-primary 一樣，可以不用額外設定背景和邊框顏色 */
+    /* background-color: #007bff; */
+    /* border-color: #007bff; */
+}
+
+/* 針對小螢幕進一步調整 */
+@media (max-width: 768px) {
+    .view-odds-btn {
+        font-size: 0.9rem; /* 在小螢幕上再小一點 */
+        padding: 6px 12px; /* 調整內邊距 */
+    }
+}
