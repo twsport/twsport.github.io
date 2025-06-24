@@ -126,7 +126,7 @@ function renderGames(games, tableBodyId, gameType, addBreakTag = false) {
             <td>${game.game_type || 'N/A'}</td>
             <td>${formattedDateTime}</td>
             <td>
-                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary btn-lg" style="font-size: 24px; padding: 15px 40px;">查看盤口</a>
+                <a href="${detailPage}?id=${game.FIXTURE_ID}" class="btn btn-primary view-odds-btn">查看盤口</a>
             </td>
         `;
         tableBody.appendChild(row);
