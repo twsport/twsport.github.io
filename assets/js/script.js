@@ -195,25 +195,28 @@ async function loadBasketballGameDetails(gameId) {
         document.getElementById('game-time').textContent = formatDateTime(data.game_info.start_time, false);
 
         // 填充讓分盤口
+        // *** 修正點 1: 將 'give_plate' 改為 'plate' ***
         renderOddsTable(data.give_odds, 'give-odds-table', [
-            'formatted_time', 'give_plate', 'host_price', 'guest_price'
-        ], false); // 在表格內也不需要換行，所以傳入 false
+            'formatted_time', 'plate', 'host_price', 'guest_price'
+        ], false); 
 
         // 填充標準盤口
+        // *** 修正點 2: 移除 'draw_price' ***
         renderOddsTable(data.std_odds, 'std-odds-table', [
-            'formatted_time', 'host_price', 'draw_price', 'guest_price'
-        ], false); // 在表格內也不需要換行，所以傳入 false
+            'formatted_time', 'host_price', 'guest_price'
+        ], false); 
 
         // 填充大小球盤口
         renderOddsTable(data.ball_odds, 'ball-odds-table', [
             'formatted_time', 'ball_plate', 'upper_price', 'lower_price'
-        ], false); // 在表格內也不需要換行，所以傳入 false
+        ], false); 
 
     } catch (error) {
         console.error(`Error fetching basketball game details for ID ${gameId}:`, error);
         document.getElementById('game-info').innerHTML = `<p class="text-danger">加載籃球賽事詳情失敗: ${error.message}</p>`;
     }
 }
+
 
 // 調整 renderOddsTable 函數，新增一個參數來控制是否換行
 function renderOddsTable(oddsData, tableBodyId, keys, addBreakTag = false) {
