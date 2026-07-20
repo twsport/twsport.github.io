@@ -94,7 +94,7 @@ async function fetchGamesBySport(sportType) {
     
     const now = new Date();
     // 設定一個時間門檻：例如隱藏 24 小時以前的比賽 (1天 = 24 * 60 * 60 * 1000 毫秒)
-    const hideThreshold = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+    const hideThreshold = new Date(now.getTime() - (72 * 60 * 60 * 1000));
 
     const future_games = [];
     const past_games = [];
