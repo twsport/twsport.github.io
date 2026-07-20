@@ -92,14 +92,22 @@ async function fetchGamesBySport(sportType) {
     
     const games = data.filter(d => d.document).map(d => parseFirestoreDoc(d.document));
     
-    // 分類為未開賽與已開賽
     const now = new Date();
+    // 設定一個時間門檻：例如隱藏 24 小時以前的比賽 (1天 = 24 * 60 * 60 * 1000 毫秒)
+    const hideThreshold = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+
     const future_games = [];
     const past_games = [];
     
     games.forEach(game => {
         if (!game.start_time) return;
         const startTime = new Date(game.start_time);
+
+        // 【過濾掉太舊的歷史賽事】如果開賽時間比 threshold 還早，直接丟棄不顯示
+        if (startTime < hideThreshold) {
+            return;
+        }
+
         if (startTime > now) {
             future_games.push(game);
         } else {
@@ -107,7 +115,6 @@ async function fetchGamesBySport(sportType) {
         }
     });
 
-    // 依照時間排序 (未開賽: 近到遠, 已開賽: 近到遠)
     future_games.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
     past_games.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
     
@@ -124,7 +131,6 @@ async function fetchSubcollection(gameId, subcollection) {
     
     const records = data.documents.map(parseFirestoreDoc);
     records.sort((a, b) => {
-        // formatted_time 格式通常可直接用字串比較，或轉 Date
         return a.formatted_time.localeCompare(b.formatted_time);
     });
     return records;
@@ -218,7 +224,6 @@ async function loadSoccerGameDetails(gameId) {
 async function loadBasketballGameDetails(gameId) {
     try {
         const gameInfo = await fetchGameInfo(gameId);
-        // 籃球的讓分盤存在 asia_odds，標準盤在 euro_odds，大小分在 count_odds
         const giveOdds = await fetchSubcollection(gameId, 'asia_odds');
         const stdOdds = await fetchSubcollection(gameId, 'euro_odds');
         const ballOdds = await fetchSubcollection(gameId, 'count_odds');
@@ -252,10 +257,7 @@ function renderOddsTable(oddsData, tableBodyId, keys, addBreakTag = false) {
         keys.forEach(key => {
             const td = document.createElement('td');
             if (key === 'formatted_time' && item[key]) {
-                // 將 2026-07-09_15-00-00 轉為 2026-07-09 15:00:00 以利顯示
                 let displayTime = item[key].replace(/_/g, ' ').replace(/-/g, ':').replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3');
-                
-                // 如果格式還是有誤，回退原始字串
                 if(addBreakTag) {
                     let parts = displayTime.split(' ');
                     td.innerHTML = parts.length > 1 ? `${parts[0]}<br>${parts[1]}` : displayTime;
