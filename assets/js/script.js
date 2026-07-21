@@ -94,7 +94,7 @@ async function fetchGamesBySport(sportType) {
     
     const now = new Date();
     // 設定一個時間門檻：例如隱藏 24 小時以前的比賽 (1天 = 24 * 60 * 60 * 1000 毫秒)
-    const hideThreshold = new Date(now.getTime() - (72 * 60 * 60 * 1000));
+    const hideThreshold = new Date(now.getTime() - (24 * 60 * 60 * 1000));
 
     const future_games = [];
     const past_games = [];
@@ -215,6 +215,17 @@ async function loadSoccerGameDetails(gameId) {
         renderOddsTable(euroOdds, 'euro-odds-table', ['formatted_time', 'host_price', 'draw_price', 'guest_price'], false);
         renderOddsTable(countOdds, 'count-odds-table', ['formatted_time', 'count', 'upper_price', 'lower_price'], false);
 
+        // 繪製 ECharts
+        const asiaChartData = prepareChartData(asiaOdds, 'formatted_time', ['host_price', 'guest_price'], ['主隊', '客隊'], 'asia_plate');
+        initEChart('asia-chart', '亞盤 (讓球) 走勢', asiaChartData);
+
+        const euroChartData = prepareChartData(euroOdds, 'formatted_time', ['host_price', 'draw_price', 'guest_price'], ['主勝', '和局', '客勝']);
+        initEChart('euro-chart', '歐賠 (標準盤) 走勢', euroChartData);
+
+        const countChartData = prepareChartData(countOdds, 'formatted_time', ['upper_price', 'lower_price'], ['大球', '小球'], 'count');
+        initEChart('count-chart', '大小盤 走勢', countChartData);
+
+
     } catch (error) {
         console.error(`Error fetching soccer game details for ID ${gameId}:`, error);
         document.getElementById('game-info').innerHTML = `<p class="text-danger">加載足球賽事詳情失敗: ${error.message}</p>`;
@@ -235,6 +246,17 @@ async function loadBasketballGameDetails(gameId) {
         renderOddsTable(giveOdds, 'give-odds-table', ['formatted_time', 'plate', 'host_price', 'guest_price'], false); 
         renderOddsTable(stdOdds, 'std-odds-table', ['formatted_time', 'host_price', 'guest_price'], false); 
         renderOddsTable(ballOdds, 'ball-odds-table', ['formatted_time', 'ball_plate', 'upper_price', 'lower_price'], false); 
+
+        // 繪製 ECharts
+        const giveChartData = prepareChartData(giveOdds, 'formatted_time', ['host_price', 'guest_price'], ['主隊', '客隊'], 'plate');
+        initEChart('give-chart', '讓分盤 走勢', giveChartData);
+
+        const stdChartData = prepareChartData(stdOdds, 'formatted_time', ['host_price', 'guest_price'], ['主勝', '客勝']);
+        initEChart('std-chart', '標準盤 走勢', stdChartData);
+
+        const ballChartData = prepareChartData(ballOdds, 'formatted_time', ['upper_price', 'lower_price'], ['大分', '小分'], 'ball_plate');
+        initEChart('ball-chart', '大小分 走勢', ballChartData);
+ 
 
     } catch (error) {
         console.error(`Error fetching basketball game details for ID ${gameId}:`, error);
@@ -293,4 +315,70 @@ function formatDateTime(isoString, addBreakTag = false) {
     } catch (e) {
         return isoString;
     }
+}
+
+
+// --- ECharts 圖表繪製邏輯 ---
+function prepareChartData(oddsData, timeKey, valueKeys, names, extraInfoKey = null) {
+    const times = [];
+    const tooltipExtras = [];
+    
+    oddsData.forEach(item => {
+        let t = item[timeKey];
+        if (t) {
+            t = t.replace(/_/g, ' ').replace(/-/g, ':').replace(/^(\d{4}):(\d{2}):(\d{2})/, '$2-$3');
+        }
+        times.push(t || '');
+        if (extraInfoKey) {
+            tooltipExtras.push(item[extraInfoKey] || '');
+        }
+    });
+
+    const series = valueKeys.map((vk, i) => {
+        return {
+            name: names[i],
+            type: 'line',
+            data: oddsData.map(item => parseFloat(item[vk]) || null),
+            symbol: 'circle',
+            symbolSize: 6,
+            smooth: true
+        };
+    });
+
+    return { times, series, tooltipExtras };
+}
+
+function initEChart(domId, titleText, data) {
+    const dom = document.getElementById(domId);
+    if (!dom || data.times.length === 0) return;
+    const myChart = echarts.init(dom);
+    
+    const option = {
+        title: { text: titleText, left: 'center' },
+        tooltip: { 
+            trigger: 'axis',
+            formatter: function (params) {
+                let html = params[0].axisValue + '<br/>';
+                if (data.tooltipExtras && data.tooltipExtras.length > 0) {
+                    html += `<span style="font-weight:bold;color:#ff5722;">盤口: ${data.tooltipExtras[params[0].dataIndex]}</span><br/>`;
+                }
+                params.forEach(p => {
+                    html += `${p.marker} ${p.seriesName}: <b>${p.value}</b><br/>`;
+                });
+                return html;
+            }
+        },
+        legend: { top: 'bottom' },
+        grid: { left: '5%', right: '5%', bottom: '15%', containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: data.times },
+        yAxis: { type: 'value', scale: true },
+        series: data.series
+    };
+    
+    // 自適應大小
+    window.addEventListener('resize', function() {
+        myChart.resize();
+    });
+    
+    myChart.setOption(option);
 }
