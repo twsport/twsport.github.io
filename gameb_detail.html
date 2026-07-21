@@ -31,10 +31,7 @@
         <!-- 導覽列 Tabs -->
         <ul class="nav nav-tabs nav-justified" id="oddsTabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active font-weight-bold" id="give-tab" data-toggle="tab" href="#give" role="tab" style="font-size: 1.2rem;">讓分盤</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link font-weight-bold" id="std-tab" data-toggle="tab" href="#std" role="tab" style="font-size: 1.2rem;">標準盤</a>
+                <a class="nav-link active font-weight-bold" id="linkage-tab" data-toggle="tab" href="#linkage" role="tab" style="font-size: 1.2rem;">雙盤聯動 (讓分 + 標準)</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link font-weight-bold" id="ball-tab" data-toggle="tab" href="#ball" role="tab" style="font-size: 1.2rem;">大小分盤</a>
@@ -44,35 +41,43 @@
         <!-- Tabs 內容區 -->
         <div class="tab-content border border-top-0 p-3 mb-5" id="oddsTabsContent">
             
-            <!-- 讓分盤區塊 -->
-            <div class="tab-pane fade show active" id="give" role="tabpanel">
-                <div id="give-chart" style="width: 100%; height: 400px; margin-bottom: 20px;"></div>
-                <table class="table table-bordered text-center detail-table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>時間</th>
-                            <th>盤口</th>
-                            <th>主賠率</th>
-                            <th>客賠率</th>
-                        </tr>
-                    </thead>
-                    <tbody id="give-odds-table"></tbody>
-                </table>
-            </div>
-
-            <!-- 標準盤區塊 -->
-            <div class="tab-pane fade" id="std" role="tabpanel">
-                <div id="std-chart" style="width: 100%; height: 400px; margin-bottom: 20px;"></div>
-                <table class="table table-bordered text-center detail-table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>時間</th>
-                            <th>主勝</th>
-                            <th>客勝</th>
-                        </tr>
-                    </thead>
-                    <tbody id="std-odds-table"></tbody>
-                </table>
+            <!-- 雙盤聯動區塊 -->
+            <div class="tab-pane fade show active" id="linkage" role="tabpanel">
+                <h3 class="text-center mt-3 mb-4">讓分盤走勢</h3>
+                <div id="give-chart" style="width: 100%; height: 350px; margin-bottom: 30px;"></div>
+                
+                <h3 class="text-center mt-3 mb-4">標準盤走勢</h3>
+                <div id="std-chart" style="width: 100%; height: 350px; margin-bottom: 40px;"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="text-center">讓分盤紀錄</h4>
+                        <table class="table table-bordered text-center detail-table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>時間</th>
+                                    <th>盤口</th>
+                                    <th>主賠率</th>
+                                    <th>客賠率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="give-odds-table"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-center">標準盤紀錄</h4>
+                        <table class="table table-bordered text-center detail-table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>時間</th>
+                                    <th>主勝</th>
+                                    <th>客勝</th>
+                                </tr>
+                            </thead>
+                            <tbody id="std-odds-table"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- 大小分盤區塊 -->
@@ -102,15 +107,14 @@
         // ECharts 在隱藏的 tab 中寬度會變成 0，當切換 tab 時需要重新調整大小
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             const targetId = $(e.target).attr("href"); 
-            if (targetId === '#std') {
-                const chart = echarts.getInstanceByDom(document.getElementById('std-chart'));
-                if (chart) chart.resize();
-            } else if (targetId === '#ball') {
+            if (targetId === '#ball') {
                 const chart = echarts.getInstanceByDom(document.getElementById('ball-chart'));
                 if (chart) chart.resize();
-            } else if (targetId === '#give') {
-                const chart = echarts.getInstanceByDom(document.getElementById('give-chart'));
-                if (chart) chart.resize();
+            } else if (targetId === '#linkage') {
+                const giveChart = echarts.getInstanceByDom(document.getElementById('give-chart'));
+                if (giveChart) giveChart.resize();
+                const stdChart = echarts.getInstanceByDom(document.getElementById('std-chart'));
+                if (stdChart) stdChart.resize();
             }
         });
     </script>
