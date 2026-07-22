@@ -68,10 +68,11 @@ function parseFirestoreDoc(doc) {
     return res;
 }
 
-// --- ECharts 圖表繪製邏輯 (支援雙Y軸與盤口深度階梯圖) ---
+// --- ECharts 圖表繪製邏輯 (支援雙Y軸與盤口階梯線) ---
 function parsePlateNumber(plateStr) {
     if (!plateStr) return null;
-    const match = plateStr.match(/[《\\(]?([+-]?\\d+(\\.\\d+)?)(?:\\/([+-]?\\d+(\\.\\d+)?))?[》\\)]?/);
+    // 正確的 JavaScript 正則表達式
+    const match = plateStr.match(/[《\(]?([+-]?\d+(\.\d+)?)(?:\/([+-]?\d+(\.\d+)?))?[》\)]?/);
     if (match) {
         const num1 = parseFloat(match[1]);
         const num2 = match[3] ? parseFloat(match[3]) : num1;
@@ -89,7 +90,7 @@ function prepareChartData(oddsData, timeKey, valueKeys, names, extraInfoKey = nu
     oddsData.forEach(item => {
         let t = item[timeKey];
         if (t) {
-            t = t.replace(/_/g, ' ').replace(/-/g, ':').replace(/^(\\d{4}):(\\d{2}):(\\d{2})/, '$1-$2-$3');
+            t = t.replace(/_/g, ' ').replace(/-/g, ':').replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3');
         }
         times.push(t || '');
         if (extraInfoKey) {
@@ -143,12 +144,12 @@ function initEChart(domId, titleText, data) {
     const myChart = echarts.init(dom);
     
     const yAxisConfig = [
-        { type: 'value', scale: true, name: '賠率水位', position: 'left' }
+        { type: 'value', scale: true, name: '水位', position: 'left' }
     ];
 
     if (data.hasPlateData) {
         yAxisConfig.push({
-            type: 'value', scale: true, name: '盤口深度', position: 'right',
+            type: 'value', scale: true, name: '盤口 (讓分)', position: 'right',
             splitLine: { show: false }
         });
     }
@@ -207,7 +208,6 @@ async function fetchGamesBySport(sportType) {
     const games = data.filter(d => d.document).map(d => parseFirestoreDoc(d.document));
     
     const now = new Date();
-    // 設定一個時間門檻：例如隱藏 24 小時以前的比賽
     const hideThreshold = new Date(now.getTime() - (72 * 60 * 60 * 1000));
 
     const future_games = [];
@@ -216,7 +216,6 @@ async function fetchGamesBySport(sportType) {
     games.forEach(game => {
         if (!game.start_time) return;
         const startTime = new Date(game.start_time);
-
         if (startTime < hideThreshold) return;
 
         if (startTime > now) {
@@ -407,10 +406,8 @@ function formatDateTime(isoString, addBreakTag = false) {
             }
             return isoString;
         }
-
         const datePart = date.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
         const timePart = date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-
         return addBreakTag ? `${datePart}<br>${timePart}` : `${datePart} ${timePart}`;
     } catch (e) {
         return isoString;
